@@ -1,6 +1,6 @@
-Engenharia de Dados na Prática: Pipeline ETL de dados do coin market cap - Nível Iniciante (adaptado de https://www.youtube.com/watch?v=I8qPqbXQBDU&t=2126s)
+# Engenharia de Dados na Prática: Pipeline ETL de dados do coin market cap - Nível Iniciante (adaptado de https://www.youtube.com/watch?v=I8qPqbXQBDU&t=2126s)
 
-```
+```mermaid
 graph TD
     subgraph External_API [Data Source]
         CMC[CoinMarketCap API]
