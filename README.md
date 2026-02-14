@@ -1,31 +1,46 @@
-# Engenharia de Dados na Prática: Pipeline ETL de dados do coin market cap - Nível Iniciante (adaptado de https://www.youtube.com/watch?v=I8qPqbXQBDU&t=2126s)
+# Engenharia de Dados na Prática: Pipeline ETL de dados do coin market cap - Nível Iniciante 
+(adaptado de https://www.youtube.com/watch?v=I8qPqbXQBDU&t=2126s)
 
 ```mermaid
 graph TD
-    subgraph External_API [Data Source]
-        CMC[CoinMarketCap API]
+    %% Configurações Gerais para fundo claro
+    accTitle: Fluxo ETL Dólar CoinMarketCap
+    accDescr: Diagrama de fluxo de dados usando Airflow, Python e Postgres
+
+    subgraph Fonte_Dados [Fonte de Dados Externa]
+        CMC["fa:fa-cloud-download API CoinMarketCap"]
     end
 
-    subgraph Airflow_Orchestrator [Airflow DAG]
-        Start(Start) --> CheckAPI{Check API Availability}
-        CheckAPI -- Success --> Extract[Extract JSON]
-        Extract --> Transform[Clean & Format Data]
-        Transform --> Load[Insert/Upsert Data]
-        Load --> End(End)
+    subgraph Orquestrador_Airflow [DAG do Apache Airflow]
+        Inicio((Início)) --> ValidarAPI{Validar API?}
+        
+        ValidarAPI -- Sim --> Extracao[PythonOperator: Extração JSON]
+        ValidarAPI -- Não --> Falha([Falha/Alerta])
+
+        Extracao --> Transformacao[PythonOperator: Tratamento e Limpeza]
+        Transformacao --> Carga[PostgresOperator: Inserção/Upsert]
+        
+        Carga --> Fim(Fim)
     end
 
-    subgraph Storage [Database]
-        PG[(PostgreSQL)]
+    subgraph Armazenamento [Banco de Dados]
+        DB[("fa:fa-database PostgreSQL")]
     end
 
-    %% Relationships
-    CMC -.->|HTTP GET / JSON| Extract
-    Load -->|SQL Insert| PG
+    %% Relacionamentos e Fluxo de Dados
+    CMC -.->|Requisição HTTP| Extracao
+    Carga -->|Comando SQL| DB
 
-    %% Styling
-    style CMC fill:#f9f,stroke:#333,stroke-width:2px
-    style PG fill:#00758f,stroke:#333,stroke-width:2px,color:#fff
-    style Airflow_Orchestrator fill:#e1f5fe,stroke:#01579b,stroke-dasharray
+    %% Estilização Minimalista (Fundo Branco)
+    style Fonte_Dados fill:#ffffff,stroke:#333,stroke-width:2px,stroke-dasharray: 5 5
+    style Orquestrador_Airflow fill:#ffffff,stroke:#01579b,stroke-width:2px
+    style Armazenamento fill:#ffffff,stroke:#333,stroke-width:2px,stroke-dasharray: 5 5
+    
+    style CMC fill:#fff,stroke:#333
+    style DB fill:#fff,stroke:#333
+    style Inicio fill:#dfd,stroke:#333
+    style Fim fill:#fdd,stroke:#333
+    style ValidarAPI fill:#fffbe6,stroke:#d4a017
 ```
 ## ✒️ 
 Para mais informações sobre como implementar esse projeto, visite https://github.com/vbluuiza/pipeline_etl_weather_data_tutorial_youtube
